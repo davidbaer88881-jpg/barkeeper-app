@@ -201,6 +201,57 @@ nav.bot button.on .ic{filter:none;transform:translateY(-1px) scale(1.1)}
 .namechip{padding:7px 12px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:13.5px;max-width:42vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hint{font-size:13px;color:var(--mut);margin-top:6px}
 .sec{margin-top:14px}
+/* Statistik, Rankings, Bewertungen */
+.stat{position:relative}
+.rs{position:absolute;top:10px;right:10px;height:28px;min-width:28px;padding:0 8px;border-radius:9px;background:rgba(255,255,255,.1);font-size:14px;font-weight:700;color:var(--txt);z-index:2;white-space:nowrap}
+.rs.ask{background:var(--red);color:#fff;font-size:12px}
+.stat.hl .rs{background:rgba(0,0,0,.2)}
+.sh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 6px 10px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:700;min-height:28px}
+.sh .rs{position:static;letter-spacing:0;text-transform:none}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:10px}
+.pod{position:relative;text-align:center;padding:14px 8px 12px;border-radius:20px 20px 14px 14px;background:var(--card);border:1px solid var(--line);min-width:0;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+.pod[data-a]{cursor:pointer}
+.pod.r1{order:2;padding-top:24px;background:linear-gradient(180deg,rgba(251,191,36,.28),rgba(251,191,36,.04));border-color:rgba(251,191,36,.55);box-shadow:0 10px 40px rgba(251,191,36,.18)}
+.pod.r2{order:1;background:linear-gradient(180deg,rgba(203,213,225,.18),rgba(203,213,225,.03))}
+.pod.r3{order:3;background:linear-gradient(180deg,rgba(217,119,6,.22),rgba(217,119,6,.03))}
+.pod .md{font-size:26px;line-height:1}
+.pod .pe{font-size:36px;margin:6px 0 4px}
+.pod.r1 .pe{font-size:46px}
+.pod .nm,.rcard .nm{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pod .q,.rcard .q{color:var(--mut);font-size:12.5px;font-weight:600}
+.pod .rk{margin-top:6px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.ranks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.rcard{position:relative;padding:14px 12px;border-radius:18px;background:var(--card);border:1px solid var(--line);min-width:0}
+.rcard .k{color:var(--mut);font-size:12.5px;font-weight:700;padding-right:30px;white-space:nowrap}
+.rcard .pe{font-size:34px;margin:8px 0 2px}
+.rcard .sub{font-size:12px;color:var(--mut);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcard.mini{text-align:center;padding:12px 8px}
+.rcard.mini .k{padding:0}
+.rcard.mini .pe{font-size:28px;margin:6px 0 0}
+.stars{color:var(--amber);letter-spacing:1px}
+.stars.lg{font-size:22px}
+.rt{margin-top:4px;font-size:13px}
+.rt b{margin:0 2px}
+.bs{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:99px;background:rgba(251,191,36,.18);color:var(--amber);font-size:11px;font-weight:800;vertical-align:middle}
+.starpick{display:flex;justify-content:center;gap:6px;margin:18px 0 4px}
+.starpick button{font-size:46px;line-height:1;color:rgba(255,255,255,.15);transition:transform .15s,color .15s}
+.starpick button.on{color:var(--amber);text-shadow:0 0 22px rgba(251,191,36,.55)}
+.starpick button:active{transform:scale(1.25)}
+.starlbl{text-align:center;font-weight:700;color:var(--mut);min-height:22px}
+.ratebtn{margin-left:auto;padding:6px 10px;border-radius:10px;background:rgba(251,191,36,.14);color:var(--amber);font-size:13px;font-weight:700;white-space:nowrap}
+.ratebtn.done{background:transparent}
+.dhead{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.dem{width:76px;height:76px;border-radius:22px;display:grid;place-items:center;font-size:44px;background:linear-gradient(135deg,rgba(255,61,154,.2),rgba(139,92,246,.2));flex:none}
+.rsum{display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:18px;background:var(--card);border:1px solid var(--line);margin-bottom:6px}
+.rsum .big{font-size:44px;font-weight:800;letter-spacing:-.04em}
+.rv{padding:12px 0;border-bottom:1px solid var(--line)}
+.rv:last-child{border-bottom:0}
+.rv .row{gap:8px}
+.rvc{margin-top:4px;color:#e9e1f5;line-height:1.4;word-break:break-word}
+.revrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.revrow:last-child{border-bottom:0}
+.drink .tap{cursor:pointer}
+.xbtn{position:absolute;top:12px;right:14px;width:36px;height:36px;border-radius:50%;background:var(--card2);border:1px solid var(--line);font-size:15px;font-weight:700;z-index:3}
 </style>
 </head>
 <body>
@@ -273,6 +324,12 @@ document.addEventListener('focusout', () => setTimeout(() => {
 
 /* Öffentliche Nachrichten-Server (Relay) – Bar und Gäste nutzen denselben */
 const BROKERS = ['wss://broker.hivemq.com:8884/mqtt', 'wss://broker.emqx.io:8084/mqtt'];
+const STAT_KEYS = ['rev', 'orders', 'drinks', 'guests', 'wait', 'peak', 'today', 'top3', 'week', 'month', 'alltime', 'reviews'];
+const starStr = v => { const f = Math.max(0, Math.min(5, Math.round(v))); return '★'.repeat(f) + '☆'.repeat(5 - f); };
+const MEDALS = ['🥇', '🥈', '🥉'];
+function podiumHtml(list, attr) {
+  return `<div class="podium">${list.map((x, i) => `<div class="pod r${i + 1}" ${attr ? attr(x) : ''}><div class="md">${MEDALS[i]}</div><div class="pe">${esc(x.e || '🍹')}</div><div class="nm">${esc(x.n)}</div><div class="q">${x.q}× verkauft</div><div class="rk">Platz ${i + 1}</div></div>`).join('')}</div>`;
+}
 const STATUS = { sending:'Wird gesendet…', new:'Eingegangen', prep:'Wird gemixt', ready:'Fertig – abholen!', done:'Abgeholt', cancel:'Storniert' };
 const EMOJIS = ['🍹','🍸','🍺','🍻','🍷','🥂','🥃','🍾','🧉','🍶','🥤','🧃','☕','💧','🍋','🍓','🍊','🥥','🍉','🔥','❄️','🌶️','🍫','🥨'];
 
@@ -287,6 +344,7 @@ const Bar = {
     const m = (cat, emoji, name, price, desc = '') => ({ id: 'd-' + uid(6), cat, emoji, name, price, desc, soldOut: false });
     return {
       barName: 'Neon Bar', peerId: null, open: true, happy: 0, free: false, counter: { day: '', n: 0 }, orders: [],
+      reviews: [], resets: {}, agg: { top3: {}, alltime: {} },
       menu: [
         m('Cocktails','🍹','Mojito',8.5,'Rum, Minze, Limette, Soda'),
         m('Cocktails','🍊','Aperol Spritz',7,'Aperol, Prosecco, Soda'),
@@ -306,11 +364,80 @@ const Bar = {
   init() {
     this.S = store.get('bk_bar', null) || this.defaults();
     if (!this.S.peerId) { this.S.peerId = 'bk-' + uid(12); this.save(); }
+    this.migrate();
     this.render();
     setInterval(() => { if (this.started && (this.view === 'orders')) safeRender(() => this.renderBody()); }, 30000);
     setInterval(() => this.watchdog(), 6000);
   },
   save() { store.set('bk_bar', this.S); },
+  migrate() {
+    const S = this.S;
+    if (!Array.isArray(S.reviews)) S.reviews = [];
+    if (!S.resets || typeof S.resets !== 'object') S.resets = {};
+    if (!S.agg || typeof S.agg !== 'object') { S.agg = { top3: {}, alltime: {} }; (S.orders || []).filter(o => o.status !== 'cancel').forEach(o => this.aggAdd(o, 1)); }
+    S.agg.top3 = S.agg.top3 || {}; S.agg.alltime = S.agg.alltime || {};
+    this.save();
+  },
+  aggAdd(o, sign) {
+    for (const k of ['top3', 'alltime']) for (const i of o.items) {
+      const a = this.S.agg[k][i.name] || (this.S.agg[k][i.name] = { e: i.emoji, q: 0 });
+      a.e = i.emoji || a.e; a.q = Math.max(0, a.q + sign * i.qty);
+      if (!a.q) delete this.S.agg[k][i.name];
+    }
+  },
+  sortAgg(m) { return Object.entries(m).map(([n, v]) => ({ n, e: v.e, q: v.q })).sort((a, b) => b.q - a.q || a.n.localeCompare(b.n)); },
+  rankList(orders) { const m = {}; orders.forEach(o => o.items.forEach(i => { (m[i.name] = m[i.name] || { e: i.emoji, q: 0 }).q += i.qty; })); return this.sortAgg(m); },
+  periodOrders(start, key) { const st = Math.max(start, this.S.resets[key] || 0); return this.S.orders.filter(o => o.ts >= st && o.status !== 'cancel'); },
+  rankings() {
+    const d = new Date(); d.setHours(0, 0, 0, 0);
+    const week = new Date(d); week.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    const month = new Date(d.getFullYear(), d.getMonth(), 1);
+    return {
+      top3: this.sortAgg(this.S.agg.top3).slice(0, 3),
+      week: this.rankList(this.periodOrders(+week, 'week')).slice(0, 3),
+      month: this.rankList(this.periodOrders(+month, 'month')).slice(0, 3),
+      all: this.sortAgg(this.S.agg.alltime).slice(0, 3)
+    };
+  },
+  reviewStats() {
+    const by = {};
+    for (const r of this.S.reviews) {
+      const b = by[r.drinkId] || (by[r.drinkId] = { sum: 0, n: 0, dist: [0, 0, 0, 0, 0], list: [] });
+      b.sum += r.stars; b.n++; b.dist[r.stars - 1]++; b.list.push(r);
+    }
+    for (const b of Object.values(by)) { b.avg = Math.round(b.sum / b.n * 10) / 10; b.list.sort((x, y) => y.ts - x.ts); }
+    return by;
+  },
+  broadcastReviews() {
+    const d = {};
+    for (const [id, b] of Object.entries(this.reviewStats())) d[id] = { avg: b.avg, n: b.n, dist: b.dist, list: b.list.slice(0, 15).map(r => ({ name: r.name, stars: r.stars, comment: r.comment, ts: r.ts })) };
+    this.pub('reviews', { t: 'reviews', d }, true);
+  },
+  receiveReview(gid, r) {
+    if (!r || typeof r.orderId !== 'string') return;
+    const o = this.S.orders.find(x => x.id === r.orderId && x.guestId === gid);
+    if (!o || (o.status !== 'ready' && o.status !== 'done')) return;
+    const it = o.items.find(i => i.id === r.drinkId); if (!it) return;
+    const stars = Math.max(1, Math.min(5, parseInt(r.stars) || 0));
+    const rev = { id: o.id + ':' + it.id, drinkId: it.id, drink: it.name, emoji: it.emoji, guestId: gid, name: o.name, stars, comment: String(r.comment || '').trim().slice(0, 300), ts: Date.now() };
+    const ex = this.S.reviews.find(x => x.id === rev.id);
+    if (ex) Object.assign(ex, rev); else this.S.reviews.push(rev);
+    if (this.S.reviews.length > 3000) this.S.reviews = this.S.reviews.slice(-3000);
+    this.save(); this.broadcastReviews();
+    toast(`⭐ ${o.name} hat ${it.name} mit ${stars} ${stars === 1 ? 'Stern' : 'Sternen'} bewertet`);
+    if (this.view === 'stats' || this.view === 'menu') safeRender(() => this.renderBody());
+  },
+  resetStats(keys) {
+    const now = Date.now();
+    for (const k of keys) {
+      this.S.resets[k] = now;
+      if (k === 'top3') this.S.agg.top3 = {};
+      if (k === 'alltime') this.S.agg.alltime = {};
+      if (k === 'reviews') this.S.reviews = [];
+    }
+    this.confirm = null; this.save(); this.broadcastInfo(); this.broadcastReviews(); this.renderBody();
+    toast(keys.length > 1 ? '♻️ Alle Statistiken zurückgesetzt' : '↺ Statistik zurückgesetzt');
+  },
   start() { unlockAudio(); keepAwake(); this.started = true; this.connect(); this.render(); },
 
   /* --- Verbindung über Nachrichten-Server --- */
@@ -329,7 +456,7 @@ const Bar = {
       this.status = 'on'; this._everOn = true; this.renderHeader();
       cl.subscribe(this.topic('in'), { qos: 1 });
       cl.publish(this.topic('status'), 'online', { retain: true, qos: 1 });
-      this.broadcastInfo(); this.broadcastOrders();
+      this.broadcastInfo(); this.broadcastOrders(); this.broadcastReviews();
     });
     cl.on('message', (t, msg) => { if (this.client === cl && t === this.topic('in')) { try { this.onData(JSON.parse(msg.toString())); } catch {} } });
     cl.on('reconnect', () => { if (this.client === cl) { this.status = 'wait'; this.renderHeader(); } });
@@ -352,9 +479,10 @@ const Bar = {
     const isNew = !this.guests.has(gid); this.guests.set(gid, Date.now());
     if (d.t === 'hello') { if (isNew) this.renderHeader(); this.sendOrders(gid); }
     else if (d.t === 'order') this.receiveOrder(gid, d.order);
+    else if (d.t === 'review') this.receiveReview(gid, d.review);
   },
   publicInfo() {
-    return { t: 'menu', barName: this.S.barName, open: this.S.open, happy: this.S.free ? 0 : this.S.happy, free: !!this.S.free,
+    return { t: 'menu', barName: this.S.barName, open: this.S.open, happy: this.S.free ? 0 : this.S.happy, free: !!this.S.free, rank: this.rankings(),
       menu: this.S.menu.map(({id, cat, emoji, name, price, desc, soldOut}) => ({id, cat, emoji, name, price, desc, soldOut})) };
   },
   pub(sub, obj, retain) { try { if (this.client && this.client.connected) this.client.publish(this.topic(sub), JSON.stringify(obj), { qos: 1, retain: !!retain }); } catch {} },
@@ -390,15 +518,16 @@ const Bar = {
       note: String(o.note || '').trim().slice(0, 200), items, total: items.reduce((s, i) => s + i.qty * i.price, 0),
       status: 'new', ts: Date.now()
     };
-    this.S.orders.push(order);
-    if (this.S.orders.length > 600) this.S.orders = this.S.orders.slice(-600);
-    this.save();
+    this.S.orders.push(order); this.aggAdd(order, 1);
+    if (this.S.orders.length > 3000) this.S.orders = this.S.orders.slice(-3000);
+    this.save(); this.broadcastInfo();
     chime('new'); buzz([200, 80, 200]); toast(`🔔 Neue Bestellung von ${order.name}`); flashTitle(`🔔 Neue Bestellung!`);
     this.broadcastOrders();
     safeRender(() => this.render());
   },
   setStatus(id, st) {
     const o = this.S.orders.find(x => x.id === id); if (!o) return;
+    if (st === 'cancel' && o.status !== 'cancel') { this.aggAdd(o, -1); setTimeout(() => this.broadcastInfo(), 0); }
     o.status = st; if (st === 'ready') o.readyTs = Date.now(); if (st === 'prep') o.prepTs = Date.now();
     this.confirm = null; this.save(); this.broadcastOrders(); this.render();
     if (st === 'ready') toast(`✅ ${o.name} wurde benachrichtigt`);
@@ -462,7 +591,7 @@ const Bar = {
       <div class="o-foot"><span class="o-total">${o.total > 0 ? eur(o.total) : '🎁 Gratis'}</span>${btns}</div></div>`;
   },
   v_menu() {
-    const cats = [...new Set(this.S.menu.map(m => m.cat))];
+    const cats = [...new Set(this.S.menu.map(m => m.cat))], rsx = this.reviewStats();
     const form = this.formOpen ? `<div class="card" style="margin-bottom:6px">
         <div class="h2" style="margin-top:0;font-size:18px">Neues Getränk</div>
         <label class="lb">Symbol</label>
@@ -479,7 +608,7 @@ const Bar = {
       ${cats.map(cat => `<div class="cat-h">${esc(cat)}</div>${this.S.menu.filter(m => m.cat === cat).map(m => `
         <div class="item ${m.soldOut ? 'so' : ''}">
           <div class="em">${esc(m.emoji)}</div>
-          <div class="flex1"><div class="nm">${esc(m.name)}</div><div class="ds">${m.soldOut ? '🚫 Ausverkauft' : esc(m.desc || '')}</div></div>
+          <div class="flex1"><div class="nm">${esc(m.name)}</div><div class="ds">${rsx[m.id] ? `<span class="stars">★</span> <b>${rsx[m.id].avg.toFixed(1)}</b> (${rsx[m.id].n}) · ` : ''}${m.soldOut ? '🚫 Ausverkauft' : esc(m.desc || '')}</div></div>
           <div class="pr">${this.S.free ? `<s class="muted" style="font-weight:500">${eur(m.price)}</s>` : eur(m.price)}</div>
           <button class="tgl ${m.soldOut ? '' : 'on'}" title="Verfügbar" data-a="soldout" data-id="${m.id}"></button>
           <button class="btn sm danger" data-a="del" data-id="${m.id}">${this.confirm === m.id ? 'Löschen?' : '🗑'}</button>
@@ -514,28 +643,54 @@ const Bar = {
       <div class="hint">Tippen zum Schließen</div></div>`;
   },
   v_stats() {
-    const today = new Date().toDateString();
-    const T = this.S.orders.filter(o => new Date(o.ts).toDateString() === today && o.status !== 'cancel');
-    const rev = T.reduce((s, o) => s + o.total, 0);
-    const drinks = T.reduce((s, o) => s + o.items.reduce((a, i) => a + i.qty, 0), 0);
-    const waits = T.filter(o => o.readyTs).map(o => (o.readyTs - o.ts) / 60000);
+    const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+    const T = k => this.periodOrders(+d0, k);
+    const rev = T('rev').reduce((s, o) => s + o.total, 0);
+    const drinks = T('drinks').reduce((s, o) => s + o.items.reduce((a, i) => a + i.qty, 0), 0);
+    const waits = T('wait').filter(o => o.readyTs).map(o => (o.readyTs - o.ts) / 60000);
     const avg = waits.length ? Math.round(waits.reduce((a, b) => a + b, 0) / waits.length * 10) / 10 : null;
-    const top = {}; T.forEach(o => o.items.forEach(i => { top[i.name] = top[i.name] || { e: i.emoji, n: 0 }; top[i.name].n += i.qty; }));
-    const tops = Object.entries(top).sort((a, b) => b[1].n - a[1].n).slice(0, 6); const max = tops.length ? tops[0][1].n : 1;
-    const guests = new Set(T.map(o => o.name.toLowerCase())).size;
-    const hours = Array(24).fill(0); T.forEach(o => hours[new Date(o.ts).getHours()]++);
-    const peak = T.length ? hours.indexOf(Math.max(...hours)) : null;
-    return `<div class="h2">Heute</div>
+    const guests = new Set(T('guests').map(o => o.name.toLowerCase())).size;
+    const hours = Array(24).fill(0), P = T('peak'); P.forEach(o => hours[new Date(o.ts).getHours()]++);
+    const peak = P.length ? hours.indexOf(Math.max(...hours)) : null;
+    const today = this.rankList(T('today')).slice(0, 6), max = today.length ? today[0].q : 1;
+    const rk = this.rankings(), rs = this.reviewStats();
+    const rsBtn = k => `<button class="rs ${this.confirm === 'rs:' + k ? 'ask' : ''}" data-a="resetStat" data-k="${k}" title="Zurücksetzen">${this.confirm === 'rs:' + k ? 'Zurücksetzen?' : '↺'}</button>`;
+    const tile = (k, label, val, hl) => `<div class="stat ${hl ? 'hl' : ''}">${rsBtn(k)}<div class="k">${label}</div><div class="v">${val}</div></div>`;
+    const sh = (title, k) => `<div class="sh"><span>${title}</span>${k ? rsBtn(k) : ''}</div>`;
+    const none = t => `<div class="card muted" style="text-align:center">${t}</div>`;
+    const rankCard = (k, ic, label, list) => `<div class="rcard">${rsBtn(k)}<div class="k">${ic} ${label}</div>${list.length
+      ? `<div class="pe">${esc(list[0].e || '🍹')}</div><div class="nm">${esc(list[0].n)}</div><div class="q">${list[0].q}× bestellt</div>${list.slice(1).map((x, i) => `<div class="sub">${i + 2}. ${esc(x.n)} · ${x.q}×</div>`).join('')}`
+      : '<div class="q" style="margin-top:14px">Noch keine Daten</div>'}</div>`;
+    const all = this.S.reviews, tot = all.length, oavg = tot ? Math.round(all.reduce((s, r) => s + r.stars, 0) / tot * 10) / 10 : null;
+    const rows = Object.entries(rs).sort((a, b) => b[1].avg - a[1].avg || b[1].n - a[1].n).map(([id, b]) => {
+      const m = this.S.menu.find(x => x.id === id), nm = m ? m.name : b.list[0].drink, em = m ? m.emoji : b.list[0].emoji;
+      return `<div class="revrow"><div style="font-size:26px">${esc(em || '🍹')}</div><div class="flex1"><div style="font-weight:700">${esc(nm)}</div><div class="rt"><span class="stars">${starStr(b.avg)}</span> <b>${b.avg.toFixed(1)}</b> <span class="muted">(${b.n} ${b.n === 1 ? 'Bewertung' : 'Bewertungen'})</span></div></div></div>`;
+    }).join('');
+    const comments = [...all].sort((a, b) => b.ts - a.ts).slice(0, 40);
+    return `<div class="h2">Statistik</div>
+      ${sh('📆 Heute')}
       <div class="stats">
-        <div class="stat hl"><div class="k">Umsatz</div><div class="v">${this.S.free && rev === 0 ? '🎁 Gratis' : eur(rev)}</div></div>
-        <div class="stat"><div class="k">Bestellungen</div><div class="v">${T.length}</div></div>
-        <div class="stat"><div class="k">Drinks</div><div class="v">${drinks}</div></div>
-        <div class="stat"><div class="k">Gäste</div><div class="v">${guests}</div></div>
-        <div class="stat"><div class="k">Ø Wartezeit</div><div class="v">${avg !== null ? avg + ' min' : '–'}</div></div>
-        <div class="stat"><div class="k">Stoßzeit</div><div class="v">${peak !== null ? peak + ' Uhr' : '–'}</div></div>
+        ${tile('rev', 'Umsatz', this.S.free && rev === 0 ? '🎁 Gratis' : eur(rev), true)}
+        ${tile('orders', 'Bestellungen', T('orders').length)}
+        ${tile('drinks', 'Drinks', drinks)}
+        ${tile('guests', 'Gäste', guests)}
+        ${tile('wait', 'Ø Wartezeit', avg !== null ? avg + ' min' : '–')}
+        ${tile('peak', 'Stoßzeit', peak !== null ? peak + ' Uhr' : '–')}
       </div>
-      <div class="cat-h">🏆 Top-Drinks</div>
-      <div class="card">${tops.length ? tops.map(([n, v], i) => `<div class="bar-row"><div class="lbl">${i === 0 ? '👑 ' : ''}${esc(v.e || '')} ${esc(n)}</div><div class="trk"><div class="fil" style="width:${v.n / max * 100}%"></div></div><div class="cnt">${v.n}</div></div>`).join('') : '<div class="muted" style="text-align:center;padding:14px">Noch keine Bestellungen heute.</div>'}</div>`;
+      ${sh('🏆 Top 3 – meistverkauft', 'top3')}
+      ${rk.top3.length ? podiumHtml(rk.top3) : none('Noch keine Verkäufe – die Top 3 erscheinen automatisch.')}
+      ${sh('🔥 Beliebteste Getränke')}
+      <div class="ranks">${rankCard('week', '📅', 'Woche', rk.week)}${rankCard('month', '🗓️', 'Monat', rk.month)}${rankCard('alltime', '♾️', 'Allzeit', rk.all)}</div>
+      ${sh('📊 Heute im Detail', 'today')}
+      <div class="card">${today.length ? today.map((v, i) => `<div class="bar-row"><div class="lbl">${i === 0 ? '👑 ' : ''}${esc(v.e || '')} ${esc(v.n)}</div><div class="trk"><div class="fil" style="width:${v.q / max * 100}%"></div></div><div class="cnt">${v.q}</div></div>`).join('') : '<div class="muted" style="text-align:center;padding:14px">Noch keine Bestellungen heute.</div>'}</div>
+      ${sh('⭐ Bewertungen', 'reviews')}
+      <div class="card">
+        <div class="rsum" style="margin-bottom:${tot ? 10 : 0}px"><div class="big">${oavg !== null ? oavg.toFixed(1) : '–'}</div><div><div class="stars lg">${oavg !== null ? starStr(oavg) : '☆☆☆☆☆'}</div><div class="muted">${tot} ${tot === 1 ? 'Bewertung' : 'Bewertungen'} insgesamt</div></div></div>
+        ${rows || '<div class="muted" style="text-align:center;padding:8px">Gäste können ihre Drinks bewerten, sobald sie fertig sind.</div>'}
+      </div>
+      ${comments.length ? `${sh('💬 Gästekommentare')}<div class="card" style="padding-top:4px;padding-bottom:4px">${comments.map(r => `<div class="rv"><div class="row"><span style="font-size:20px">${esc(r.emoji || '🍹')}</span><b>${esc(r.name)}</b><span class="stars">${starStr(r.stars)}</span><button class="btn sm danger" style="margin-left:auto;padding:4px 9px" data-a="delReview" data-id="${esc(r.id)}">${this.confirm === 'dr:' + r.id ? 'Löschen?' : '✕'}</button></div><div class="muted" style="font-size:12.5px;margin-top:2px">${esc(r.drink)} · ${ago(r.ts)}</div>${r.comment ? `<div class="rvc">${esc(r.comment)}</div>` : ''}</div>`).join('')}</div>` : ''}
+      <button class="btn danger block" style="margin-top:28px" data-a="resetAllStats">${this.confirm === 'rs:ALL' ? '⚠️ Wirklich ALLE Statistiken zurücksetzen?' : '♻️ Alle Statistiken zurücksetzen'}</button>
+      <div class="hint" style="text-align:center">↺ setzt eine einzelne Statistik zurück. Karte, Einstellungen und Bestellungen bleiben erhalten.</div>`;
   },
   v_settings() {
     return `<div class="h2">Optionen</div>
@@ -565,7 +720,7 @@ const Bar = {
   },
 
   act(a, ds) {
-    if (a !== 'cancel' && a !== 'del') this.confirm = null;
+    if (!['cancel', 'del', 'resetStat', 'resetAllStats', 'delReview'].includes(a)) this.confirm = null;
     if (a !== 'resetAll') this.resetAsk = false;
     switch (a) {
       case 'start': this.start(); break;
@@ -590,6 +745,15 @@ const Bar = {
       case 'del':
         if (this.confirm === ds.id) { const m = this.S.menu.find(x => x.id === ds.id); this.S.menu = this.S.menu.filter(x => x.id !== ds.id); this.confirm = null; this.save(); this.broadcastInfo(); this.renderBody(); toast(`${m ? m.name : 'Getränk'} gelöscht`); }
         else { this.confirm = ds.id; this.renderBody(); } break;
+      case 'resetStat':
+        if (this.confirm !== 'rs:' + ds.k) { this.confirm = 'rs:' + ds.k; this.renderBody(); break; }
+        this.resetStats([ds.k]); break;
+      case 'resetAllStats':
+        if (this.confirm !== 'rs:ALL') { this.confirm = 'rs:ALL'; this.renderBody(); break; }
+        this.resetStats(STAT_KEYS); break;
+      case 'delReview':
+        if (this.confirm !== 'dr:' + ds.id) { this.confirm = 'dr:' + ds.id; this.renderBody(); break; }
+        this.S.reviews = this.S.reviews.filter(r => r.id !== ds.id); this.confirm = null; this.save(); this.broadcastReviews(); this.renderBody(); toast('Bewertung gelöscht'); break;
       case 'copy': copyText(this.guestUrl()); break;
       case 'fullqr': this.full = true; this.render(); try { document.documentElement.requestFullscreen?.().catch(() => {}); } catch {} break;
       case 'closefull': this.full = false; this.render(); try { document.fullscreenElement && document.exitFullscreen(); } catch {} break;
@@ -607,14 +771,14 @@ const Bar = {
       case 'importApply': {
         const d = this.importData.data, def = this.defaults();
         this.S = { ...def, ...d, peerId: this.S.peerId, counter: d.counter || def.counter, orders: Array.isArray(d.orders) ? d.orders : [] };
-        this.importData = null; this.save(); this.broadcastInfo(); this.broadcastOrders(); this.render(); toast('📂 Backup geladen ✓'); break;
+        this.importData = null; this.migrate(); this.broadcastInfo(); this.broadcastOrders(); this.broadcastReviews(); this.render(); toast('📂 Backup geladen ✓'); break;
       }
       case 'happy': this.S.happy = +ds.v; this.save(); this.broadcastInfo(); this.render(); toast(this.S.happy ? `🎉 Happy Hour −${this.S.happy}% aktiv` : 'Happy Hour beendet'); break;
       case 'clearDone': { const n = this.S.orders.length; this.S.orders = this.S.orders.filter(o => o.status !== 'done' && o.status !== 'cancel'); this.save(); this.broadcastOrders(); this.render(); toast(`${n - this.S.orders.length} Bestellungen gelöscht`); break; }
       case 'newCode': this.S.peerId = 'bk-' + uid(12); this.save(); try { this.client && this.client.publish(this.topic('status'), 'offline', { retain: true, qos: 1 }); } catch {} this.guests.clear(); setTimeout(() => this.connect(), 300); this.view = 'qr'; this.render(); toast('Neuer QR-Code erstellt'); break;
       case 'resetAll':
         if (!this.resetAsk) { this.resetAsk = true; this.renderBody(); break; }
-        { const id = this.S.peerId; this.S = this.defaults(); this.S.peerId = id; this.save(); this.broadcastInfo(); this.broadcastOrders(); this.render(); toast('Zurückgesetzt'); } break;
+        { const id = this.S.peerId; this.S = this.defaults(); this.S.peerId = id; this.save(); this.broadcastInfo(); this.broadcastOrders(); this.broadcastReviews(); this.render(); toast('Zurückgesetzt'); } break;
     }
   },
   change(key, el) {
@@ -640,13 +804,15 @@ const Bar = {
    ================================================================ */
 const Guest = {
   barId: null, broker: 0, G: null, info: null, client: null, connected: false, barAway: false,
-  view: 'menu', cat: 'Alle', cart: {}, note: '', cartOpen: false, editName: false, ready: null,
+  view: 'menu', cat: 'Alle', cart: {}, note: '', cartOpen: false, editName: false, ready: null, reviews: {}, rv: null, detail: null,
 
   init(barId) {
     this.barId = barId.replace(/[^a-z0-9-]/gi, '').slice(0, 40);
     this.broker = Math.min(BROKERS.length - 1, Math.max(0, parseInt(new URLSearchParams(location.hash.slice(1)).get('b')) || 0));
     this.G = store.get('bk_guest_' + this.barId, null) || { name: '', guestId: 'g-' + uid(12), orders: {} };
     this.info = store.get('bk_info_' + this.barId, null);
+    this.reviews = store.get('bk_rev_' + this.barId, {}) || {};
+    if (!this.G.rated) this.G.rated = {};
     if (Object.values(this.G.orders).some(o => ['new', 'prep', 'ready', 'sending'].includes(o.status))) this.view = 'orders';
     this.render(); this.connect();
     setInterval(() => this.watchdog(), 4000);
@@ -659,7 +825,7 @@ const Guest = {
     const cl = this.client = mqtt.connect(BROKERS[this.broker], { clientId: 'bkg-' + uid(12), clean: true, keepalive: 30, reconnectPeriod: 2000, connectTimeout: 10000 });
     cl.on('connect', () => {
       this.connected = true;
-      cl.subscribe([T('menu'), T('status'), T('g/' + this.G.guestId)], { qos: 1 });
+      cl.subscribe([T('menu'), T('status'), T('reviews'), T('g/' + this.G.guestId)], { qos: 1 });
       this.hello(); this.resend();
       safeRender(() => this.render());
     });
@@ -684,7 +850,7 @@ const Guest = {
   onData(d) {
     if (!d || typeof d !== 'object') return;
     if (d.t === 'menu') {
-      this.info = { barName: d.barName, open: d.open, happy: d.happy, free: !!d.free, menu: d.menu || [] };
+      this.info = { barName: d.barName, open: d.open, happy: d.happy, free: !!d.free, rank: d.rank || null, menu: d.menu || [] };
       store.set('bk_info_' + this.barId, this.info);
       for (const id of Object.keys(this.cart)) { const m = this.info.menu.find(x => x.id === id); if (!m || m.soldOut) delete this.cart[id]; }
       document.title = baseTitle = (d.barName || 'Bar') + ' – Bestellen';
@@ -702,6 +868,8 @@ const Guest = {
       const cut = Date.now() - 24 * 3600e3;
       for (const [k, o] of Object.entries(this.G.orders)) if (o.ts < cut) delete this.G.orders[k];
       this.save(); safeRender(() => this.render());
+    } else if (d.t === 'reviews') {
+      this.reviews = d.d || {}; store.set('bk_rev_' + this.barId, this.reviews); safeRender(() => this.render());
     } else if (d.t === 'reject') {
       delete this.G.orders[d.id]; this.save(); toast('⚠️ ' + (d.reason || 'Bestellung abgelehnt')); this.render();
     }
@@ -746,7 +914,7 @@ const Guest = {
         ${main}
       </main>
       ${I && this.view === 'menu' && cnt && !this.cartOpen ? `<div class="cartbar"><div><b>${cnt} ${cnt === 1 ? 'Drink' : 'Drinks'}</b><div style="font-size:14px;opacity:.9">${I.free ? '🎁 gratis' : eur(tot)}</div></div><button class="btn" data-a="openCart">Warenkorb →</button></div>` : ''}
-      ${this.cartOpen ? this.cartSheet() : ''}
+      ${this.cartOpen ? this.cartSheet() : ''}${this.detail ? this.detailSheet() : ''}${this.rv ? this.rateSheet() : ''}
     </div>${this.ready ? this.readyOverlay() : ''}`;
   },
   welcome() {
@@ -767,18 +935,24 @@ const Guest = {
     if (!cats.includes(this.cat)) this.cat = 'Alle';
     const list = I.menu.filter(m => this.cat === 'Alle' || m.cat === this.cat);
     if (!I.menu.length) return `<div class="empty"><div class="big">🫗</div>Die Karte ist noch leer.</div>`;
+    const rk = I.rank || {}, top = (rk.top3 || []).map(x => x.n), byName = n => (I.menu.find(m => m.name === n) || {}).id;
     const card = m => {
-      const q = this.cart[m.id] || 0, p = discounted(m.price, I.happy);
+      const q = this.cart[m.id] || 0, p = discounted(m.price, I.happy), rv = this.reviews[m.id], tp = top.indexOf(m.name);
       return `<div class="drink ${q ? 'has' : ''} ${m.soldOut ? 'so' : ''}">
-        <div class="em">${esc(m.emoji)}</div>
-        <div class="flex1"><div class="nm">${esc(m.name)}</div>${m.desc ? `<div class="ds">${esc(m.desc)}</div>` : ''}${I.free ? '' : `<div class="pr">${I.happy ? `<s>${eur(m.price)}</s>` : ''}${eur(p)}</div>`}</div>
+        <div class="em tap" data-a="drinkInfo" data-id="${m.id}">${esc(m.emoji)}</div>
+        <div class="flex1 tap" data-a="drinkInfo" data-id="${m.id}"><div class="nm">${esc(m.name)}${tp >= 0 ? `<span class="bs">${MEDALS[tp]} Top ${tp + 1}</span>` : ''}</div>${m.desc ? `<div class="ds">${esc(m.desc)}</div>` : ''}${rv ? `<div class="rt"><span class="stars">${starStr(rv.avg)}</span> <b>${rv.avg.toFixed(1)}</b> <span class="muted">(${rv.n})</span></div>` : ''}${I.free ? '' : `<div class="pr">${I.happy ? `<s>${eur(m.price)}</s>` : ''}${eur(p)}</div>`}</div>
         ${m.soldOut ? '<span class="tag cancel">Aus</span>' : `<div class="qty">${q ? `<button data-a="dec" data-id="${m.id}">−</button><span>${q}</span>` : ''}<button class="add" data-a="inc" data-id="${m.id}" ${!I.open ? 'disabled' : ''}>＋</button></div>`}
       </div>`;
     };
     const body = this.cat === 'Alle'
       ? cats.slice(1).map(c => `<div class="cat-h">${esc(c)}</div><div class="drinks">${I.menu.filter(m => m.cat === c).map(card).join('')}</div>`).join('')
       : `<div class="drinks">${list.map(card).join('')}</div>`;
-    return `<div class="chips">${cats.map(c => `<button class="chip ${this.cat === c ? 'on' : ''}" data-a="cat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>${body}`;
+    const pops = [['📅', 'Woche', rk.week], ['🗓️', 'Monat', rk.month], ['♾️', 'Allzeit', rk.all]];
+    const hl = this.cat === 'Alle' && rk.top3 && rk.top3.length ? `<div class="cat-h" style="margin-top:6px">🏆 Top 3 – meistverkauft</div>
+      ${podiumHtml(rk.top3, x => byName(x.n) ? `data-a="drinkInfo" data-id="${byName(x.n)}"` : '')}
+      <div class="cat-h">🔥 Am beliebtesten</div>
+      <div class="ranks">${pops.map(([ic, l, li]) => `<div class="rcard mini" ${li && li[0] && byName(li[0].n) ? `data-a="drinkInfo" data-id="${byName(li[0].n)}" style="cursor:pointer"` : ''}><div class="k">${ic} ${l}</div>${li && li[0] ? `<div class="pe">${esc(li[0].e || '🍹')}</div><div class="nm">${esc(li[0].n)}</div><div class="q">${li[0].q}× bestellt</div>` : '<div class="q" style="margin-top:10px">–</div>'}</div>`).join('')}</div>` : '';
+    return `<div class="chips">${cats.map(c => `<button class="chip ${this.cat === c ? 'on' : ''}" data-a="cat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>${hl}${body}`;
   },
   ordersView() {
     const list = Object.values(this.G.orders).sort((a, b) => b.ts - a.ts);
@@ -786,6 +960,7 @@ const Guest = {
     return `<div style="display:grid;gap:12px">${list.map(o => {
       const lvl = { sending: 0, new: 1, prep: 2, ready: 3, done: 3, cancel: 0 }[o.status];
       const tagc = { sending: '', new: 'new', prep: 'prep', ready: 'ready', done: '', cancel: 'cancel' }[o.status];
+      const canRate = o.status === 'ready' || o.status === 'done';
       let info = '';
       if (o.status === 'sending') info = this.connected ? 'Wird übermittelt…' : '📡 Warte auf Verbindung zur Bar…';
       else if ((o.status === 'new' || o.status === 'prep') && o.pos !== null && o.pos !== undefined) info = o.pos === 0 ? '🔥 Du bist als Nächstes dran!' : `⏳ Noch ${o.pos} ${o.pos === 1 ? 'Bestellung' : 'Bestellungen'} vor dir · ca. ${Math.max(2, o.pos * 2 + 2)} Min`;
@@ -794,7 +969,7 @@ const Guest = {
         <div class="o-top"><div class="o-num">${o.num ? '#' + String(o.num).padStart(2, '0') : '…'}</div><div class="flex1"><div class="o-name">${STATUS[o.status]}</div><div class="o-time">${hhmm(o.ts)} · ${o.total > 0 ? eur(o.total) : '🎁 Gratis'}</div></div><span class="tag ${tagc}">${o.status === 'ready' ? '🍹' : o.status === 'prep' ? '🍸' : o.status === 'done' ? '✓' : o.status === 'cancel' ? '✕' : '•'}</span></div>
         ${o.status !== 'cancel' && o.status !== 'done' ? `<div class="track"><div class="${lvl >= 1 ? 'on' : ''}"></div><div class="${lvl >= 2 ? 'on' : ''}"></div><div class="${lvl >= 3 ? 'ok' : ''}"></div></div>
         <div class="steps"><span class="${lvl >= 1 ? 'on' : ''}">Eingegangen</span><span class="${lvl >= 2 ? 'on' : ''}">Wird gemixt</span><span class="${lvl >= 3 ? 'on' : ''}">Fertig</span></div>` : ''}
-        <ul class="o-items">${o.items.map(i => `<li><span class="q">${i.qty}×</span><span>${esc(i.emoji || '')} ${esc(i.name)}</span></li>`).join('')}</ul>
+        <ul class="o-items">${o.items.map(i => { const r = this.G.rated[o.id + ':' + i.id]; return `<li><span class="q">${i.qty}×</span><span>${esc(i.emoji || '')} ${esc(i.name)}</span>${canRate ? `<button class="ratebtn ${r ? 'done' : ''}" data-a="rate" data-o="${o.id}" data-id="${i.id}">${r ? `<span class="stars">${starStr(r.stars)}</span>` : '⭐ Bewerten'}</button>` : ''}</li>`; }).join('')}</ul>
         ${o.note ? `<div class="o-note">📝 ${esc(o.note)}</div>` : ''}
         ${info ? `<div class="sec" style="font-weight:600">${info}</div>` : ''}
       </div>`;
@@ -812,12 +987,39 @@ const Guest = {
       <button class="btn pri lg block" data-a="order" ${!items.length || !this.info.open ? 'disabled' : ''}>🍹 Jetzt bestellen</button>
     </div>`;
   },
+  detailSheet() {
+    const I = this.info, m = I && I.menu.find(x => x.id === this.detail); if (!m) return '';
+    const rv = this.reviews[m.id], q = this.cart[m.id] || 0, com = rv ? rv.list.filter(x => x.comment) : [];
+    return `<div class="sheet-bg" data-a="closeDetail"></div><div class="sheet">
+      <div class="grab"></div><button class="xbtn" data-a="closeDetail" aria-label="Schließen">✕</button>
+      <div class="dhead"><div class="dem">${esc(m.emoji)}</div><div class="flex1"><div class="h2" style="margin:0">${esc(m.name)}</div>${m.desc ? `<div class="muted">${esc(m.desc)}</div>` : ''}${I.free ? '' : `<div style="font-weight:800;margin-top:6px">${eur(discounted(m.price, I.happy))}</div>`}</div></div>
+      ${rv ? `<div class="rsum"><div class="big">${rv.avg.toFixed(1)}</div><div><div class="stars lg">${starStr(rv.avg)}</div><div class="muted">${rv.n} ${rv.n === 1 ? 'Bewertung' : 'Bewertungen'}</div></div></div>
+        ${[5, 4, 3, 2, 1].map(st => `<div class="bar-row"><div class="lbl" style="width:42px">${st} ★</div><div class="trk"><div class="fil" style="width:${rv.dist[st - 1] / rv.n * 100}%"></div></div><div class="cnt">${rv.dist[st - 1]}</div></div>`).join('')}
+        <div class="cat-h">💬 Kommentare</div>
+        ${com.length ? com.map(x => `<div class="rv"><div class="row"><b>${esc(x.name)}</b><span class="stars">${starStr(x.stars)}</span><span class="muted" style="margin-left:auto;font-size:12px">${ago(x.ts)}</span></div><div class="rvc">${esc(x.comment)}</div></div>`).join('') : '<div class="muted">Noch keine Kommentare.</div>'}`
+      : `<div class="empty" style="padding:24px 10px"><div class="big" style="font-size:40px">⭐</div>Noch keine Bewertungen – probier ihn und sei der Erste!</div>`}
+      ${m.soldOut || !I.open ? '' : `<button class="btn pri lg block sec" data-a="inc" data-id="${m.id}">＋ In den Warenkorb${q ? ` (${q})` : ''}</button>`}
+    </div>`;
+  },
+  rateSheet() {
+    const r = this.rv, o = this.G.orders[r.orderId], it = o && o.items.find(i => i.id === r.drinkId);
+    if (!it) return '';
+    return `<div class="sheet-bg" data-a="closeRate"></div><div class="sheet">
+      <div class="grab"></div><button class="xbtn" data-a="closeRate" aria-label="Schließen">✕</button>
+      <div style="text-align:center"><div style="font-size:56px">${esc(it.emoji || '🍹')}</div><div class="h2" style="margin:6px 0 2px">${esc(it.name)}</div><div class="muted">Wie hat's dir geschmeckt?</div></div>
+      <div class="starpick">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= r.stars ? 'on' : ''}" data-a="star" data-v="${n}" aria-label="${n} Sterne">★</button>`).join('')}</div>
+      <div class="starlbl">${['Tipp auf die Sterne', 'Nicht so gut 😕', 'Geht so', 'Gut 🙂', 'Sehr gut 😋', 'Hervorragend! 🤩'][r.stars]}</div>
+      <div class="sec"><label class="lb">Kommentar (optional)</label><textarea class="in" id="g-rcomment" rows="3" maxlength="300" placeholder="Was hat dir gefallen?">${esc(r.comment)}</textarea></div>
+      <button class="btn pri lg block sec" data-a="sendReview" ${r.stars ? '' : 'disabled'}>⭐ Bewertung abschicken</button>
+    </div>`;
+  },
   readyOverlay() {
     const o = this.ready;
     return `<div class="overlay"><div class="gl">🍹</div><h2>Dein Drink ist <span style="color:var(--green)">fertig!</span></h2>
       <div class="num">#${String(o.num).padStart(2, '0')}</div>
       <div class="muted" style="font-size:18px;max-width:320px">${esc(this.G.name)}, hol dir ${o.items.length === 1 ? 'deinen ' + esc(o.items[0].name) : 'deine Drinks'} an der Bar ab. Prost! 🥂</div>
-      <button class="btn ok lg" data-a="closeReady" style="margin-top:10px">Bin unterwegs 👍</button></div>`;
+      <button class="btn ok lg" data-a="closeReady" style="margin-top:10px">Bin unterwegs 👍</button>
+      <div class="hint">Danach kannst du deinen Drink unter „Bestellungen“ mit ⭐ bewerten.</div></div>`;
   },
   act(a, ds) {
     switch (a) {
@@ -830,6 +1032,18 @@ const Guest = {
       case 'order': this.placeOrder(); break;
       case 'editName': this.editName = true; this.render(); break;
       case 'closeReady': this.ready = null; this.render(); break;
+      case 'drinkInfo': this.detail = ds.id; this.render(); break;
+      case 'closeDetail': this.detail = null; this.render(); break;
+      case 'rate': { const k = ds.o + ':' + ds.id, old = this.G.rated[k]; this.rv = { orderId: ds.o, drinkId: ds.id, stars: old ? old.stars : 0, comment: old ? old.comment : '' }; this.render(); break; }
+      case 'star': this.rv.stars = +ds.v; buzz(10); this.render(); break;
+      case 'closeRate': this.rv = null; this.render(); break;
+      case 'sendReview': {
+        const r = this.rv; if (!r || !r.stars) return;
+        if (!this.connected) { toast('Keine Verbindung – bitte gleich nochmal versuchen'); return; }
+        this.pub({ t: 'review', guestId: this.G.guestId, review: { orderId: r.orderId, drinkId: r.drinkId, stars: r.stars, comment: r.comment.trim().slice(0, 300) } });
+        this.G.rated[r.orderId + ':' + r.drinkId] = { stars: r.stars, comment: r.comment.trim().slice(0, 300) };
+        this.save(); this.rv = null; this.render(); toast('Danke für deine Bewertung! 🙏'); break;
+      }
     }
   },
   submit(f) {
@@ -840,7 +1054,7 @@ const Guest = {
       this.G.name = v.slice(0, 30); this.editName = false; this.save(); this.render(); keepAwake();
     }
   },
-  input(el) { if (el.id === 'g-note') this.note = el.value; }
+  input(el) { if (el.id === 'g-note') this.note = el.value; if (el.id === 'g-rcomment' && this.rv) this.rv.comment = el.value; }
 };
 
 /* ---------- Start ---------- */
