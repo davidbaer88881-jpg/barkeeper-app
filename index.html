@@ -251,6 +251,14 @@ nav.bot button.on .ic{filter:none;transform:translateY(-1px) scale(1.1)}
 .revrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .revrow:last-child{border-bottom:0}
 .drink .tap{cursor:pointer}
+.alert{display:flex;gap:12px;align-items:center;padding:14px;border-radius:18px;margin-bottom:12px;background:linear-gradient(135deg,rgba(251,113,133,.26),rgba(251,113,133,.08));border:1px solid rgba(251,113,133,.65);box-shadow:0 10px 36px rgba(251,113,133,.22);animation:shake .55s}
+.alert.request{background:linear-gradient(135deg,rgba(251,191,36,.22),rgba(251,191,36,.06));border-color:rgba(251,191,36,.6);box-shadow:0 10px 36px rgba(251,191,36,.15)}
+.alert .aic{font-size:30px;flex:none}
+.alert .abtns{display:flex;flex-direction:column;gap:6px;flex:none}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.o-warn{margin-top:10px;padding:9px 12px;border-radius:12px;background:rgba(251,191,36,.14);color:var(--amber);font-weight:700;font-size:14px}
+.o-cx{margin-top:10px;padding:9px 12px;border-radius:12px;background:rgba(251,113,133,.14);color:#fecdd3;font-weight:700;font-size:14px}
+.gfoot{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:12px}
 .xbtn{position:absolute;top:12px;right:14px;width:36px;height:36px;border-radius:50%;background:var(--card2);border:1px solid var(--line);font-size:15px;font-weight:700;z-index:3}
 </style>
 </head>
@@ -278,11 +286,11 @@ let actx;
 function unlockAudio() { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch {} }
 function chime(kind) {
   if (!actx) return;
-  const notes = kind === 'ready' ? [523, 659, 784, 1047] : [988, 740, 988];
+  const notes = kind === 'ready' ? [523, 659, 784, 1047] : kind === 'cancel' ? [740, 554, 415, 311] : [988, 740, 988];
   notes.forEach((f, i) => {
     const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + i * 0.13;
-    o.type = 'triangle'; o.frequency.value = f;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.35, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+    o.type = kind === 'cancel' ? 'square' : 'triangle'; o.frequency.value = f;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(kind === 'cancel' ? 0.18 : 0.35, t + 0.02); g.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
     o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.55);
   });
 }
@@ -327,6 +335,7 @@ const BROKERS = ['wss://broker.hivemq.com:8884/mqtt', 'wss://broker.emqx.io:8084
 const STAT_KEYS = ['rev', 'orders', 'drinks', 'guests', 'wait', 'peak', 'today', 'top3', 'week', 'month', 'alltime', 'reviews'];
 const starStr = v => { const f = Math.max(0, Math.min(5, Math.round(v))); return '★'.repeat(f) + '☆'.repeat(5 - f); };
 const MEDALS = ['🥇', '🥈', '🥉'];
+const pad2 = n => String(n).padStart(2, '0');
 function podiumHtml(list, attr) {
   return `<div class="podium">${list.map((x, i) => `<div class="pod r${i + 1}" ${attr ? attr(x) : ''}><div class="md">${MEDALS[i]}</div><div class="pe">${esc(x.e || '🍹')}</div><div class="nm">${esc(x.n)}</div><div class="q">${x.q}× verkauft</div><div class="rk">Platz ${i + 1}</div></div>`).join('')}</div>`;
 }
@@ -374,6 +383,7 @@ const Bar = {
     const S = this.S;
     if (!Array.isArray(S.reviews)) S.reviews = [];
     if (!S.resets || typeof S.resets !== 'object') S.resets = {};
+    if (!Array.isArray(S.gcIds)) S.gcIds = [];
     if (!S.agg || typeof S.agg !== 'object') { S.agg = { top3: {}, alltime: {} }; (S.orders || []).filter(o => o.status !== 'cancel').forEach(o => this.aggAdd(o, 1)); }
     S.agg.top3 = S.agg.top3 || {}; S.agg.alltime = S.agg.alltime || {};
     this.save();
@@ -480,6 +490,7 @@ const Bar = {
     if (d.t === 'hello') { if (isNew) this.renderHeader(); this.sendOrders(gid); }
     else if (d.t === 'order') this.receiveOrder(gid, d.order);
     else if (d.t === 'review') this.receiveReview(gid, d.review);
+    else if (d.t === 'cancel') this.receiveCancel(gid, d.orderId);
   },
   publicInfo() {
     return { t: 'menu', barName: this.S.barName, open: this.S.open, happy: this.S.free ? 0 : this.S.happy, free: !!this.S.free, rank: this.rankings(),
@@ -503,6 +514,7 @@ const Bar = {
   receiveOrder(gid, o) {
     if (!o || typeof o.id !== 'string') return;
     if (this.S.orders.some(x => x.id === o.id)) { this.sendOrders(gid); return; }
+    if ((this.S.gcIds || []).includes(o.id)) return;
     if (!this.S.open) { this.pub('g/' + gid, { t: 'reject', id: o.id, reason: 'Die Bar nimmt gerade keine Bestellungen an.' }); return; }
     const items = [];
     for (const it of (Array.isArray(o.items) ? o.items : []).slice(0, 30)) {
@@ -525,9 +537,33 @@ const Bar = {
     this.broadcastOrders();
     safeRender(() => this.render());
   },
+  receiveCancel(gid, id) {
+    if (typeof id !== 'string') return;
+    const o = this.S.orders.find(x => x.id === id && x.guestId === gid);
+    const ack = (ok, reason, final) => this.pub('g/' + gid, { t: 'cancelAck', id, ok, reason, final: !!final });
+    if (!o) { if (!this.S.gcIds.includes(id)) { this.S.gcIds.push(id); this.S.gcIds = this.S.gcIds.slice(-500); this.save(); } ack(true); return; }
+    if (o.status === 'cancel') { ack(true); this.sendOrders(gid); return; }
+    if (o.status === 'new') {
+      this.aggAdd(o, -1);
+      Object.assign(o, { status: 'cancel', cancelBy: 'guest', cancelTs: Date.now(), alert: 'cancel', alertAck: false });
+      this.save(); this.broadcastInfo(); this.broadcastOrders(); ack(true);
+      chime('cancel'); buzz([500, 150, 500, 150, 500]); toast(`❌ ${o.name} hat Bestellung #${pad2(o.num)} storniert!`); flashTitle('❌ Bestellung storniert!');
+    } else if (o.status === 'prep') {
+      if (o.alert !== 'request' || o.alertAck) {
+        Object.assign(o, { alert: 'request', alertAck: false, reqTs: Date.now() }); this.save();
+        chime('cancel'); buzz([300, 100, 300]); toast(`🙋 ${o.name} möchte #${pad2(o.num)} stornieren`); flashTitle('🙋 Storno-Anfrage!');
+      }
+      ack(false, 'Dein Drink wird schon gemixt – der Barkeeper wurde informiert.'); this.sendOrders(gid);
+    } else {
+      ack(false, o.status === 'ready' ? 'Dein Drink ist schon fertig – bitte an der Bar abholen.' : 'Diese Bestellung kann nicht mehr storniert werden.', true); this.sendOrders(gid);
+    }
+    safeRender(() => this.render());
+  },
+  alerts() { return this.S.orders.filter(o => o.alert && !o.alertAck).sort((a, b) => (b.cancelTs || b.reqTs || 0) - (a.cancelTs || a.reqTs || 0)); },
   setStatus(id, st) {
     const o = this.S.orders.find(x => x.id === id); if (!o) return;
     if (st === 'cancel' && o.status !== 'cancel') { this.aggAdd(o, -1); setTimeout(() => this.broadcastInfo(), 0); }
+    if (st !== 'cancel' && o.alert === 'request' && !o.alertAck) { o.alertAck = true; this.pub('g/' + o.guestId, { t: 'cancelAck', id: o.id, ok: false, reason: 'Storno abgelehnt – dein Drink kommt trotzdem 🍹', final: true }); }
     o.status = st; if (st === 'ready') o.readyTs = Date.now(); if (st === 'prep') o.prepTs = Date.now();
     this.confirm = null; this.save(); this.broadcastOrders(); this.render();
     if (st === 'ready') toast(`✅ ${o.name} wurde benachrichtigt`);
@@ -556,9 +592,9 @@ const Bar = {
     return `<header class="top" id="hdr"><div class="logo">🍸</div><div class="ttl"><h1>${esc(this.S.barName)}</h1><small>${!this.S.open ? '⛔ Bestellungen pausiert' : this.S.free ? '🎁 Heute alles gratis' : this.S.happy ? `🎉 Happy Hour −${this.S.happy}%` : 'Barkeeper-Modus'}</small></div><span class="pill">${st}</span></header>`;
   },
   nav() {
-    const open = this.queue().length;
+    const open = this.queue().length, al = this.alerts().length;
     const t = (v, ic, l, b) => `<button class="${this.view === v ? 'on' : ''}" data-a="view" data-v="${v}"><span class="ic">${ic}</span>${l}${b ? `<span class="bdg">${b}</span>` : ''}</button>`;
-    return `<nav class="bot" id="nav"><div class="in">${t('orders','🧾','Bestellungen',open)}${t('menu','🍹','Karte')}${t('qr','📱','QR-Code')}${t('stats','📊','Statistik')}${t('settings','⚙️','Optionen')}</div></nav>`;
+    return `<nav class="bot" id="nav"><div class="in">${t('orders','🧾','Bestellungen', al ? '⚠️' : open)}${t('menu','🍹','Karte')}${t('qr','📱','QR-Code')}${t('stats','📊','Statistik')}${t('settings','⚙️','Optionen')}</div></nav>`;
   },
   body() { return this['v_' + this.view](); },
 
@@ -568,12 +604,13 @@ const Bar = {
     let list = groups[f]; list = f === 'open' ? list.sort((a, b) => a.ts - b.ts) : list.sort((a, b) => b.ts - a.ts).slice(0, 60);
     const chip = (k, l) => `<button class="chip ${f === k ? 'on' : ''}" data-a="filter" data-v="${k}">${l}<span class="n">${groups[k].length}</span></button>`;
     const empty = { open: ['🍸', 'Alles erledigt!', 'Neue Bestellungen erscheinen hier automatisch – mit Ton.'], ready: ['⏳', 'Nichts zum Abholen', 'Fertige Drinks warten hier auf ihre Gäste.'], done: ['📭', 'Noch nichts erledigt', ''] }[f];
-    return `<div class="chips">${chip('open','🔥 Offen')}${chip('ready','✅ Fertig')}${chip('done','📦 Erledigt')}</div>
+    const banner = this.alerts().map(o => `<div class="alert ${o.alert}"><div class="aic">${o.alert === 'cancel' ? '❌' : '🙋'}</div><div class="flex1"><div style="font-weight:800">${o.alert === 'cancel' ? 'Vom Gast storniert!' : 'Storno-Anfrage – wird schon gemixt'}</div><div style="font-size:14px">#${pad2(o.num)} ${esc(o.name)} · ${o.items.map(i => `${i.qty}× ${esc(i.name)}`).join(', ')}</div><div class="muted" style="font-size:12px">${ago(o.cancelTs || o.reqTs)}${o.alert === 'cancel' ? ' · nicht mehr zubereiten' : ''}</div></div><div class="abtns">${o.alert === 'request' ? `<button class="btn sm danger" data-a="reqCancel" data-id="${o.id}">Stornieren</button><button class="btn sm" data-a="ackAlert" data-id="${o.id}">Ablehnen</button>` : `<button class="btn sm" data-a="ackAlert" data-id="${o.id}">OK 👍</button>`}</div></div>`).join('');
+    return `${banner}<div class="chips">${chip('open','🔥 Offen')}${chip('ready','✅ Fertig')}${chip('done','📦 Erledigt')}</div>
       ${list.length ? `<div class="olist">${list.map(o => this.orderCard(o)).join('')}</div>`
         : `<div class="empty"><div class="big">${empty[0]}</div><div style="font-size:19px;font-weight:700;color:var(--txt)">${empty[1]}</div><div>${empty[2]}</div>${f === 'open' && !this.guestCount() ? `<button class="btn pri sec" data-a="view" data-v="qr">📱 QR-Code zeigen</button>` : ''}</div>`}`;
   },
   orderCard(o) {
-    const tag = { new: 'Neu', prep: 'In Arbeit', ready: 'Wartet', done: 'Abgeholt', cancel: 'Storniert' }[o.status];
+    const tag = { new: 'Neu', prep: 'In Arbeit', ready: 'Wartet', done: 'Abgeholt', cancel: o.cancelBy === 'guest' ? 'Vom Gast storniert' : 'Storniert' }[o.status];
     const c = this.confirm === o.id;
     let btns = '';
     if (o.status === 'new' || o.status === 'prep') {
@@ -588,6 +625,8 @@ const Bar = {
       <div class="o-top"><div class="o-num">#${String(o.num).padStart(2, '0')}</div><div class="flex1"><div class="o-name">${esc(o.name)}</div><div class="o-time">${sub}</div></div><span class="tag ${o.status}">${tag}</span></div>
       <ul class="o-items">${o.items.map(i => `<li><span class="q">${i.qty}×</span><span>${esc(i.emoji || '')} ${esc(i.name)}</span></li>`).join('')}</ul>
       ${o.note ? `<div class="o-note">📝 ${esc(o.note)}</div>` : ''}
+      ${o.status === 'cancel' && o.cancelBy === 'guest' ? `<div class="o-cx">❌ Vom Gast storniert${o.cancelTs ? ' um ' + hhmm(o.cancelTs) : ''}</div>` : ''}
+      ${o.alert === 'request' && !o.alertAck ? '<div class="o-warn">🙋 Gast möchte stornieren</div>' : ''}
       <div class="o-foot"><span class="o-total">${o.total > 0 ? eur(o.total) : '🎁 Gratis'}</span>${btns}</div></div>`;
   },
   v_menu() {
@@ -721,6 +760,12 @@ const Bar = {
 
   act(a, ds) {
     if (!['cancel', 'del', 'resetStat', 'resetAllStats', 'delReview'].includes(a)) this.confirm = null;
+    if (a === 'ackAlert' || a === 'reqCancel') {
+      const o = this.S.orders.find(x => x.id === ds.id); if (!o) return;
+      if (a === 'reqCancel') { o.alertAck = true; o.cancelBy = 'guest'; o.cancelTs = Date.now(); this.setStatus(o.id, 'cancel'); toast(`#${pad2(o.num)} storniert`); return; }
+      if (o.alert === 'request') this.pub('g/' + o.guestId, { t: 'cancelAck', id: o.id, ok: false, reason: 'Storno abgelehnt – dein Drink kommt trotzdem 🍹', final: true });
+      o.alertAck = true; this.save(); this.renderBody(); return;
+    }
     if (a !== 'resetAll') this.resetAsk = false;
     switch (a) {
       case 'start': this.start(); break;
@@ -804,7 +849,7 @@ const Bar = {
    ================================================================ */
 const Guest = {
   barId: null, broker: 0, G: null, info: null, client: null, connected: false, barAway: false,
-  view: 'menu', cat: 'Alle', cart: {}, note: '', cartOpen: false, editName: false, ready: null, reviews: {}, rv: null, detail: null,
+  view: 'menu', cat: 'Alle', cart: {}, note: '', cartOpen: false, editName: false, ready: null, reviews: {}, rv: null, detail: null, cconfirm: null,
 
   init(barId) {
     this.barId = barId.replace(/[^a-z0-9-]/gi, '').slice(0, 40);
@@ -813,6 +858,8 @@ const Guest = {
     this.info = store.get('bk_info_' + this.barId, null);
     this.reviews = store.get('bk_rev_' + this.barId, {}) || {};
     if (!this.G.rated) this.G.rated = {};
+    if (!this.G.pendingCancel) this.G.pendingCancel = {};
+    if (!this.G.cancelReq) this.G.cancelReq = {};
     if (Object.values(this.G.orders).some(o => ['new', 'prep', 'ready', 'sending'].includes(o.status))) this.view = 'orders';
     this.render(); this.connect();
     setInterval(() => this.watchdog(), 4000);
@@ -840,7 +887,11 @@ const Guest = {
   },
   pub(obj) { try { if (this.client && this.client.connected) this.client.publish(`bk/${this.barId}/in`, JSON.stringify(obj), { qos: 1 }); } catch {} },
   hello() { this.pub({ t: 'hello', guestId: this.G.guestId }); },
-  resend() { Object.values(this.G.orders).filter(o => o.status === 'sending').forEach(o => this.transmit(o)); },
+  resend() {
+    Object.values(this.G.orders).filter(o => o.status === 'sending').forEach(o => this.transmit(o));
+    for (const [id, ts] of Object.entries(this.G.pendingCancel)) { if (Date.now() - ts > 15 * 60e3) delete this.G.pendingCancel[id]; else this.sendCancel(id); }
+  },
+  sendCancel(id) { this.pub({ t: 'cancel', guestId: this.G.guestId, orderId: id }); },
   watchdog() {
     if (!this.connected) return;
     this._tick = (this._tick || 0) + 1;
@@ -857,7 +908,8 @@ const Guest = {
       safeRender(() => this.render());
     } else if (d.t === 'orders') {
       const incoming = d.orders || [];
-      for (const o of incoming) {
+      for (let o of incoming) {
+        if (this.G.pendingCancel[o.id] && o.status === 'new') o = { ...o, status: 'cancel' };
         const old = this.G.orders[o.id];
         if (old && old.status !== 'ready' && o.status === 'ready') this.celebrate(o);
         if (old && old.status !== 'cancel' && o.status === 'cancel') { toast('❌ Deine Bestellung wurde storniert'); buzz(300); }
@@ -867,6 +919,11 @@ const Guest = {
       // Alte Einträge aufräumen
       const cut = Date.now() - 24 * 3600e3;
       for (const [k, o] of Object.entries(this.G.orders)) if (o.ts < cut) delete this.G.orders[k];
+      this.save(); safeRender(() => this.render());
+    } else if (d.t === 'cancelAck') {
+      delete this.G.pendingCancel[d.id];
+      if (!d.ok && d.final) this.G.cancelReq[d.id] = 'rejected';
+      if (!d.ok && d.reason) toast('ℹ️ ' + d.reason);
       this.save(); safeRender(() => this.render());
     } else if (d.t === 'reviews') {
       this.reviews = d.d || {}; store.set('bk_rev_' + this.barId, this.reviews); safeRender(() => this.render());
@@ -961,6 +1018,10 @@ const Guest = {
       const lvl = { sending: 0, new: 1, prep: 2, ready: 3, done: 3, cancel: 0 }[o.status];
       const tagc = { sending: '', new: 'new', prep: 'prep', ready: 'ready', done: '', cancel: 'cancel' }[o.status];
       const canRate = o.status === 'ready' || o.status === 'done';
+      const req = this.G.cancelReq[o.id], cc = this.cconfirm === o.id;
+      let foot = '';
+      if (o.status === 'new' || o.status === 'sending') foot = `<button class="btn sm danger" data-a="gcancel" data-id="${o.id}">${cc ? '⚠️ Wirklich stornieren?' : '✕ Stornieren'}</button>`;
+      else if (o.status === 'prep') foot = req === true ? '<span class="muted" style="font-size:13px">🙋 Storno angefragt – der Barkeeper entscheidet</span>' : req === 'rejected' ? '<span class="muted" style="font-size:13px">Storno abgelehnt – dein Drink kommt trotzdem 🍹</span>' : `<button class="btn sm danger" data-a="gcancel" data-id="${o.id}">${cc ? '⚠️ Wirklich anfragen?' : '✕ Stornieren anfragen'}</button>`;
       let info = '';
       if (o.status === 'sending') info = this.connected ? 'Wird übermittelt…' : '📡 Warte auf Verbindung zur Bar…';
       else if ((o.status === 'new' || o.status === 'prep') && o.pos !== null && o.pos !== undefined) info = o.pos === 0 ? '🔥 Du bist als Nächstes dran!' : `⏳ Noch ${o.pos} ${o.pos === 1 ? 'Bestellung' : 'Bestellungen'} vor dir · ca. ${Math.max(2, o.pos * 2 + 2)} Min`;
@@ -972,6 +1033,7 @@ const Guest = {
         <ul class="o-items">${o.items.map(i => { const r = this.G.rated[o.id + ':' + i.id]; return `<li><span class="q">${i.qty}×</span><span>${esc(i.emoji || '')} ${esc(i.name)}</span>${canRate ? `<button class="ratebtn ${r ? 'done' : ''}" data-a="rate" data-o="${o.id}" data-id="${i.id}">${r ? `<span class="stars">${starStr(r.stars)}</span>` : '⭐ Bewerten'}</button>` : ''}</li>`; }).join('')}</ul>
         ${o.note ? `<div class="o-note">📝 ${esc(o.note)}</div>` : ''}
         ${info ? `<div class="sec" style="font-weight:600">${info}</div>` : ''}
+        ${foot ? `<div class="gfoot">${foot}</div>` : ''}
       </div>`;
     }).join('')}</div>`;
   },
@@ -1032,6 +1094,14 @@ const Guest = {
       case 'order': this.placeOrder(); break;
       case 'editName': this.editName = true; this.render(); break;
       case 'closeReady': this.ready = null; this.render(); break;
+      case 'gcancel': {
+        const o = this.G.orders[ds.id]; if (!o) return;
+        if (this.cconfirm !== ds.id) { this.cconfirm = ds.id; this.render(); setTimeout(() => { if (this.cconfirm === ds.id) { this.cconfirm = null; safeRender(() => this.render()); } }, 4000); return; }
+        this.cconfirm = null; this.G.pendingCancel[o.id] = Date.now();
+        if (o.status === 'prep') { this.G.cancelReq[o.id] = true; toast('🙋 Storno angefragt – der Barkeeper wurde informiert'); }
+        else { o.status = 'cancel'; toast('Bestellung storniert ✓'); buzz(40); }
+        this.sendCancel(o.id); this.save(); this.render(); break;
+      }
       case 'drinkInfo': this.detail = ds.id; this.render(); break;
       case 'closeDetail': this.detail = null; this.render(); break;
       case 'rate': { const k = ds.o + ':' + ds.id, old = this.G.rated[k]; this.rv = { orderId: ds.o, drinkId: ds.id, stars: old ? old.stars : 0, comment: old ? old.comment : '' }; this.render(); break; }
